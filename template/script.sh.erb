@@ -8,13 +8,35 @@ password: ${password}
 cert: false
 END
 
-export PASSWORD=${password}
+# Set home directory as default
+cat > ${HOME}/.local/share/code-server/coder.json <<END
+{
+  "query": {
+    "folder": "${HOME}"
+  }
+}
+END
+
+# Configure SSH in VS Code
+cat > ${HOME}/.vscode/settings.json <<END
+{
+    "terminal.integrated.profiles.linux": {
+        "apptainer": {
+            "path": "ssh",
+            "icon": "terminal-bash",
+            "args": [
+                "-o StrictHostKeyChecking=no",
+                "localhost",
+            ]
+        },
+    }
+    "terminal.integrated.defaultProfile.linux": "apptainer"
+}
+END
 
 # Launch code-server Server:
 echo "Starting code-server..."
-echo "User: " ${HOME}
-echo "Use password: " ${PASSWORD}
-echo "Use password: " ${password}
+export PASSWORD=${password}
 
 apptainer exec --cleanenv --home ${HOME} ${CODESERVER_APPTAINER_IMAGE} \
     /app/code-server/bin/code-server \
