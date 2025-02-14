@@ -12,5 +12,6 @@ export csrftoken="<%= csrftoken %>"
 
 export CODESERVER_APPTAINER_IMAGE="<%= context.sif.blank? ? context.custom_sif : context.sif %>" #path to sif
 
-PASSWORD=$(openssl rand -base64 15)
+#PASSWORD=$(openssl rand -base64 15)
+PASSWORD=$(</dev/urandom tr -cd '[:upper:][:lower:][:digit:]' | head -c 20)
 export password="$PASSWORD"
