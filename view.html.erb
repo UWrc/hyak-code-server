@@ -8,7 +8,7 @@
 })();
 
 </script>
-<form action="/rnode/<%= host %>/<%= port %>/auth-do-sign-in" method="post" target="_blank">
+<form action="/rnode/<%= host %>/<%= port %>/login" method="POST" target="_blank">
   <input type="hidden" name="username" value="<%= ENV["USER"] %>">
   <input type="hidden" name="password" value="<%= password %>">
   <input type="hidden" name="staySignedIn" value="1">

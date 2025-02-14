@@ -1,20 +1,24 @@
 #!/usr/bin/env bash
 
-# Prepare variables
-export APPTAINERENV_USER=$(id -un)
-export APPTAINERENV_PASSWORD=$(openssl rand -base64 15)
-
-# Create config file for code-server   
+# Create config file for code-server
 cat > ${HOME}/.config/code-server/config.yaml <<END
-bind-addr: 127.0.0.1:${port}
+bind-addr: 127.0.0.1:8080
 auth: password
-password: ${APPTAINERENV_PASSWORD}
+password: ${password}
 cert: false
 END
 
+export PASSWORD=${password}
+
 # Launch code-server Server:
 echo "Starting code-server..."
-echo "Use password: " ${APPTAINERENV_PASSWORD}
+echo "User: " ${HOME}
+echo "Use password: " ${PASSWORD}
+echo "Use password: " ${password}
 
-echo "DEBUG apptainer exec --cleanenv --home ${HOME} ${CODESERVER_APPTAINER_IMAGE} /app/code-server/bin/code-server --bind-addr=${HOSTNAME}:${port} --auth=password" 
-apptainer exec --cleanenv --home ${HOME} ${CODESERVER_APPTAINER_IMAGE} /app/code-server/bin/code-server --bind-addr=${HOSTNAME}:${port} --auth=password
+apptainer exec --cleanenv --home ${HOME} ${CODESERVER_APPTAINER_IMAGE} \
+    /app/code-server/bin/code-server \
+    --bind-addr=${HOSTNAME}:${port} \
+    --auth=password \
+    --disable-telemetry \
+    --disable-update-check

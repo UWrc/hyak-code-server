@@ -17,3 +17,6 @@ export OOD_R_LIBS_USER="<%= context.r_libs_user %>"
 <%- end -%>
 
 export CODESERVER_APPTAINER_IMAGE="<%= context.sif.blank? ? context.custom_sif : context.sif %>" #path to sif
+
+PASSWORD=$(openssl rand -base64 15)
+export password="$PASSWORD"
