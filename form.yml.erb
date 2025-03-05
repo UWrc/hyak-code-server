@@ -104,12 +104,20 @@ attributes:
   custom_sif:
     label: Full path to your customized code-server Apptainer image.
     help: "e.g. /mmfs1/gscratch/labname/containers/code-server.sif"
+  working_dir:
+    label: "Working Directory"
+    data-filepicker: true
+    data-target-file-type: dirs
+    readonly: false
+    help: |
+      Home for your workspace: holds extensions, data, and files. Defaults to $HOME if left empty.
 
 form:
   - haccount
   - hqueue
   - sif
   - custom_sif
+  - working_dir
   - htasks
   - hcpus
   - hmem
