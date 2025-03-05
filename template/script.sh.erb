@@ -30,6 +30,7 @@ cat > <%= working_dir %>/.local/share/code-server/coder.json <<END
 END
 
 # Configure SSH in VS Code
+mkdir -p <%= working_dir %>/.vscode
 cat > <%= working_dir %>/.vscode/settings.json <<END
 {
     "terminal.integrated.profiles.linux": {
@@ -41,7 +42,7 @@ cat > <%= working_dir %>/.vscode/settings.json <<END
                 "localhost",
             ]
         },
-    },
+    }
     "terminal.integrated.defaultProfile.linux": "apptainer"
 }
 END
