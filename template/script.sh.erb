@@ -3,6 +3,7 @@
 <%
 # Set our working directory.
 working_dir = Pathname.new(context.working_dir)
+data_dir = Pathname.new(context.data_dir)
 
 # Ensure that code-server always starts up in either a user defined directory or the home directory.
 if !working_dir.exist?
@@ -10,10 +11,17 @@ if !working_dir.exist?
 elsif working_dir.file?
     working_dir = working_dir.parent
 end
+
+# Data directory is $HOME by default.
+if !data_dir.exist?
+    data_dir = Pathname.new(ENV['HOME'])
+elsif data_dir.file?
+    data_dir = data_dir.parent
+end
 %>
 
 # Create config file for code-server
-cat > <%= working_dir %>/.config/code-server/config.yaml <<END
+cat > ${HOME}/.config/code-server/config.yaml <<END
 bind-addr: 127.0.0.1:8080
 auth: password
 password: ${password}
@@ -21,7 +29,7 @@ cert: false
 END
 
 # Set working directory as default
-cat > <%= working_dir %>/.local/share/code-server/coder.json <<END
+cat > ${HOME}/.local/share/code-server/coder.json <<END
 {
   "query": {
     "folder": "<%= working_dir %>"
@@ -29,7 +37,7 @@ cat > <%= working_dir %>/.local/share/code-server/coder.json <<END
 }
 END
 
-# Configure SSH in VS Code
+# Set up working directory terminal to launch on node
 mkdir -p <%= working_dir %>/.vscode
 cat > <%= working_dir %>/.vscode/settings.json <<END
 {
@@ -42,7 +50,7 @@ cat > <%= working_dir %>/.vscode/settings.json <<END
                 "localhost",
             ]
         },
-    }
+    },
     "terminal.integrated.defaultProfile.linux": "apptainer"
 }
 END
@@ -51,9 +59,12 @@ END
 echo "Starting code-server..."
 export PASSWORD=${password}
 
-apptainer exec --cleanenv --home <%= working_dir %> ${CODESERVER_APPTAINER_IMAGE} \
+apptainer exec --cleanenv --home ${HOME} ${CODESERVER_APPTAINER_IMAGE} \
     /app/code-server/bin/code-server \
     --bind-addr=${HOSTNAME}:${port} \
+    --user-data-dir="<%= data_dir %>/.local/share/code-server" \
+    --extensions-dir="<%= data_dir %>/.local/share/code-server/extensions" \
     --auth=password \
     --disable-telemetry \
-    --disable-update-check
+    --disable-update-check \
+        "<%= working_dir %>"

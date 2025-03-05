@@ -110,7 +110,14 @@ attributes:
     data-target-file-type: dirs
     readonly: false
     help: |
-      Home for your workspace: holds extensions, data, and files. Defaults to $HOME if left empty.
+      Project's root folder. Defaults to $HOME if left empty.
+  data_dir:
+    label: "Data/Extensions Directory"
+    data-filepicker: true
+    data-target-file-type: dirs
+    readonly: false
+    help: |
+      Alternate storage location for your workspace extensions and data. Defaults to $HOME if left empty.
 
 form:
   - haccount
@@ -118,6 +125,7 @@ form:
   - sif
   - custom_sif
   - working_dir
+  - data_dir
   - htasks
   - hcpus
   - hmem
