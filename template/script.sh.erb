@@ -1,24 +1,22 @@
 #!/usr/bin/env bash
 
-<%
-# Set our working directory.
-working_dir = Pathname.new(context.working_dir)
-data_dir = Pathname.new(context.data_dir)
+# Set our working directory and data directory variables
+WORK_DIR="<%= context.working_dir %>"
+DATA_DIR="<%= context.data_dir %>"
 
-# Ensure that code-server always starts up in either a user defined directory or the home directory.
-if !working_dir.exist?
-    working_dir = Pathname.new(ENV['HOME'])
-elsif working_dir.file?
-    working_dir = working_dir.parent
-end
+# Ensure that code-server always starts up in either a user defined directory or the home directory
+if [ ! -e "$WORK_DIR" ]; then
+    WORK_DIR="$HOME"
+elif [ -f "$WORK_DIR" ]; then
+    WORK_DIR="$(dirname "$WORK_DIR")"
+fi
 
-# Data directory is $HOME by default.
-if !data_dir.exist?
-    data_dir = Pathname.new(ENV['HOME'])
-elsif data_dir.file?
-    data_dir = data_dir.parent
-end
-%>
+# Data directory is $HOME by default
+if [ ! -e "$DATA_DIR" ]; then
+    DATA_DIR="$HOME"
+elif [ -f "$DATA_DIR" ]; then
+    DATA_DIR="$(dirname "$DATA_DIR")"
+fi
 
 # Create config file for code-server
 cat > ${HOME}/.config/code-server/config.yaml <<END
@@ -32,14 +30,14 @@ END
 cat > ${HOME}/.local/share/code-server/coder.json <<END
 {
   "query": {
-    "folder": "<%= working_dir %>"
+    "folder": "$WORK_DIR"
   }
 }
 END
 
 # Configure SSH in VS Code
-mkdir -p <%= working_dir %>/.vscode
-cat > <%= working_dir %>/.vscode/settings.json <<END
+mkdir -p $WORK_DIR/.vscode
+cat > $WORK_DIR/.vscode/settings.json <<END
 {
     "terminal.integrated.profiles.linux": {
         "apptainer": {
@@ -62,9 +60,9 @@ export PASSWORD=${password}
 apptainer exec --cleanenv --home ${HOME} ${CODESERVER_APPTAINER_IMAGE} \
     /app/code-server/bin/code-server \
     --bind-addr=${HOSTNAME}:${port} \
-    --user-data-dir="<%= data_dir %>/.local/share/code-server" \
-    --extensions-dir="<%= data_dir %>/.local/share/code-server/extensions" \
+    --user-data-dir="$DATA_DIR/.local/share/code-server" \
+    --extensions-dir="$DATA_DIR/.local/share/code-server/extensions" \
     --auth=password \
     --disable-telemetry \
     --disable-update-check \
-        "<%= working_dir %>"
+        "$WORK_DIR"
