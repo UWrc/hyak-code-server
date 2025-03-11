@@ -7,14 +7,14 @@ DATA_DIR="<%= context.data_dir %>"
 # Ensure that code-server always starts up in either a user defined directory or the home directory
 if [ ! -e "$WORK_DIR" ]; then
     WORK_DIR="$HOME"
-elif [ -f "$WORK_DIR" ]; then
+elif [ ! -d "$WORK_DIR" ]; then
     WORK_DIR="$(dirname "$WORK_DIR")"
 fi
 
 # Data directory is $HOME by default
 if [ ! -e "$DATA_DIR" ]; then
     DATA_DIR="$HOME"
-elif [ -f "$DATA_DIR" ]; then
+elif [ ! -d "$DATA_DIR" ]; then
     DATA_DIR="$(dirname "$DATA_DIR")"
 fi
 
